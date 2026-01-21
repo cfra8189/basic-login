@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Users</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/simple-users.css">
+  <link rel="stylesheet" href="/css/users-clean.css">
+</head>
+<body>
+  <div class="app-header">
+    <div class="app-logo"><img src="/ltl-logo.png" alt="logo"/></div>
+    <h2>Users</h2>
+    <div>
+      <label class="theme-switch">
+        <input id="themeToggle" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="app-container users-page">
+    <h1>Registered Users</h1>
+    <% if (users && users.length) { %>
+      <div class="users-grid">
+        <% users.forEach(function(user){ %>
+          <div class="user-card">
+            <div class="user-head">
+              <div class="user-meta">
+                <div class="username"><%= user.username %></div>
+                <div class="email"><%= user.email %></div>
+              </div>
+            </div>
+            <div class="user-actions">
+              <a class="muted-link" href="/users/<%= user._id %>">View</a>
+              <a class="btn" href="/users/<%= user._id %>/edit">Edit</a>
+            </div>
+            <div class="user-id">ID: <code><%= user._id %></code></div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p>No users found.</p>
+    <% } %>
+    <p><a href="/">Back</a></p>
+  </div>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
