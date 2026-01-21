@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Login</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    /* small override: keep api page compact */
+    .api-panel { max-width:720px; margin: 28px auto; padding: 20px; border-radius: 10px; background: rgba(255,255,255,0.92); box-shadow: 0 12px 30px rgba(2,6,23,0.08); border: 1px solid rgba(11,12,14,0.06); }
+    .api-panel h1 { margin: 0 0 8px 0; font-size: 26px; }
+    .api-note { text-align:left; color: #333; font-size:14px; margin-bottom:12px; }
+    .api-sample { background:#0f1724; color:#e9eef6; padding:12px; border-radius:6px; font-family:monospace; font-size:13px; }
+    .api-form .form-row { margin-bottom:10px; text-align:left; }
+    .dark-mode .api-panel { background: rgba(6,8,12,0.84); color: #e6eef8; border:1px solid rgba(255,255,255,0.04); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
+    .dark-mode .api-sample { background: #071018; color: #d6d6d6; }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <div class="app-logo"><img src="/ltl-logo.png" alt="logo"/></div>
+    <h2>API Login</h2>
+    <div>
+      <label class="theme-switch">
+        <input id="themeToggle" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="app-container">
+    <div class="api-panel">
+      <h1>Obtain an API Token</h1>
+      <p class="api-note">POST email and password to <strong>/api/users/login</strong>. On success you'll receive a JWT token and the user object (password is excluded).</p>
+
+      <form class="api-form" action="/api/users/login" method="post">
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Your password" required />
+        </div>
+        <div class="form-row">
+          <button class="btn" type="submit">Obtain Token</button>
+          <a class="muted-link" href="/">Home</a>
+        </div>
+      </form>
+
+      <h3 style="margin-top:16px">cURL example</h3>
+      <pre class="api-sample">curl -X POST -H "Content-Type: application/json" -d '{"email":"you@example.com","password":"PASSWORD"}' http://localhost:3000/api/users/login</pre>
+
+      <p class="api-note" style="margin-top:12px">Use the returned token with the <code>Authorization: Bearer &lt;token&gt;</code> header for protected endpoints such as <code>/api/me</code>.</p>
+    </div>
+  </div>
+  <script src="/js/theme.js"></script>
+  <div id="apiResult" class="api-result" style="max-width:720px;margin:12px auto;text-align:left"></div>
+  <style>
+    .api-result .api-error { color: #9b1c1c; background: rgba(255,230,230,0.9); padding:8px; border-radius:6px; border:1px solid rgba(155,28,28,0.08); }
+    .api-result .token-box { background: #0f1724; color: #e9eef6; padding:12px; border-radius:8px; font-family:monospace; font-size:13px; display:flex; gap:12px; align-items:flex-start; justify-content:space-between; }
+    .api-result .token-box pre { margin:0; white-space:pre-wrap; max-width:100%; overflow:auto; }
+    .api-result .copy-btn { background:#eaeaea; color:#0b0b0b; border-radius:6px; padding:8px 10px; border:1px solid rgba(11,12,14,0.06); font-weight:800; cursor:pointer; }
+    .dark-mode .api-result .token-box { background:#071018; color:#d6d6d6; }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const form = document.querySelector('.api-form');
+      const result = document.getElementById('apiResult');
+      function showError(msg){ result.innerHTML = `<div class="api-error">${msg}</div>`; }
+
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        result.innerHTML = '';
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        try{
+          const res = await fetch('/api/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+          if(!res.ok){
+            return showError(data.error || 'Login failed');
+          }
+          // show token and user nicely
+          const box = document.createElement('div');
+          box.className = 'token-box';
+          const pre = document.createElement('pre');
+          pre.textContent = JSON.stringify(data, null, 2);
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn';
+          btn.textContent = 'Copy ID';
+          btn.addEventListener('click', function(){
+            const id = data && data.user && data.user._id ? data.user._id : '';
+            if(navigator.clipboard && id){
+              navigator.clipboard.writeText(id).then(()=>{ btn.textContent = 'Copied'; setTimeout(()=> btn.textContent = 'Copy ID', 1200); });
+            }
+          });
+          box.appendChild(pre);
+          box.appendChild(btn);
+          result.appendChild(box);
+        } catch(err){
+          showError('Network error');
+          console.error(err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
