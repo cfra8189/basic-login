@@ -1,0 +1,583 @@
+:root{
+  --content-max-width: 980px;
+  --page-padding: 2rem;
+  --card-bg: linear-gradient(180deg, #ffffff, #fbfbfd);
+  --card-border: rgba(16,24,40,0.06);
+  --card-radius: 0px;
+  --card-padding: 16px 18px;
+  --card-shadow: 6px 6px 0 rgba(2,6,23,0.9);
+  --card-shadow-hover: 8px 8px 0 rgba(2,6,23,0.95);
+  --card-shadow-active: 10px 10px 0 rgba(2,6,23,1);
+  --card-min-height: 180px;
+  --card-width: 100%;
+}
+
+/* Theme switches (light is default). .dark-mode applies inverted/darker styles */
+
+.app-header { display:flex; align-items:center; justify-content:center; gap:12px; position:relative; min-height: 72px; padding: 12px 0; margin-bottom: 20px; }
+
+/* Center the header title in the header flow (no overlap) and keep switch top-right */
+.app-header h2 { position: static; width: 100%; text-align: center; margin: 0; font-size: 24px; font-weight: 800; }
+
+/* Place the theme switch in the header's top-right corner and vertically center it */
+.app-header > div { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
+
+/* Left logo in header */
+.app-logo { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); }
+.app-logo img { display: block; width: 56px; height: auto; object-fit: contain; }
+
+.theme-switch { display: inline-block; position: relative; width: 52px; height: 30px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.theme-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #e5e7eb; border: 2px solid #0f1724; transition: 200ms; }
+.theme-switch .slider:before { content: ""; position: absolute; height: 22px; width: 22px; left: 2px; top: 2px; background: #0f1724; transition: 200ms; }
+.theme-switch input:checked + .slider { background: #111827; }
+.theme-switch input:checked + .slider:before { transform: translateX(22px); background: #fff; }
+
+.dark-mode .theme-switch .slider { background: #111827; border-color: #fff; }
+
+
+.dark-mode .app-container {
+  background: rgba(8,10,12,0.86) !important;
+  border-color: #fff !important;
+  color: #e5e7eb;
+}
+
+.dark-mode .task-card {
+  background: linear-gradient(180deg,#0b1220,#0f1724);
+  border-color: #e5e7eb;
+  color: #e5e7eb;
+}
+
+/* Ensure task card titles are readable in dark mode */
+.dark-mode .task-card .task-title { color: #e5e7eb; }
+
+.dark-mode .task-form {
+  background: linear-gradient(180deg,#071018,#0b1220);
+  border-color: #e5e7eb;
+}
+
+/* Ensure form labels, placeholders and inputs are readable in dark mode */
+.dark-mode .task-form label { color: #e5e7eb; }
+.dark-mode .task-form input,
+.dark-mode .task-form textarea,
+.dark-mode .task-form select { background: #071018; color: #e5e7eb; border-color: rgba(229,231,235,0.08); }
+.dark-mode .task-form input::placeholder,
+.dark-mode .task-form textarea::placeholder { color: rgba(229,231,235,0.6); }
+.dark-mode .task-form select option { background: #071018; color: #e5e7eb; }
+
+.dark-mode .task-card .task-meta,
+.dark-mode .task-card .task-foot,
+.dark-mode .task-card .task-desc { color: rgba(229,231,235,0.9); }
+
+.dark-mode .btn { background: #111827; color: #fff; border-color: #fff; }
+
+
+/* Use border-box sizing globally to ensure width calculations include padding and borders */
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+
+#root {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--page-padding);
+  text-align: center;
+}
+
+/* Page background using the GIF placed in public/ */
+body {
+  background-image: url('/purgatory-room.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Use the tumblr GIF when the page is in dark mode */
+.dark-mode body {
+  background-image: url('/tumblr_1.gif');
+}
+
+/* Main page title */
+.app-container > h2 {
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 0 0 40px 0;
+  font-weight: 800;
+  color: #0f1724;
+  letter-spacing: 0.6px;
+}
+
+/* Hide native cursor site-wide; we render the visible dot cursor via CursorFollower */
+html, body { cursor: none; }
+
+/* Force-hide the native cursor everywhere so only our custom dot shows */
+* , *::before, *::after { cursor: none !important; }
+
+/* App-wide utility classes for components */
+.app-container { padding: 20px; max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.60); border-radius: 0; border: 2px solid #0f1724; box-shadow: 12px 12px 0 rgba(2,6,23,0.9); }
+.layout-grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; grid-template-areas: "main aside"; align-items: start; }
+.main-area { grid-area: main; }
+.aside-area { grid-area: aside; }
+
+/* Keep the aside visible while scrolling on larger screens */
+.aside-area {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 700px) {
+  .layout-grid { grid-template-columns: 1fr; grid-template-areas: "main" "aside"; }
+  /* Reset sticky when stacked on small screens */
+  .aside-area { position: static; }
+}
+.spaced { margin-bottom: 12px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.stats-text { font-size: 14px; }
+.right-actions { margin-left: auto; display: flex; gap: 8px; }
+
+/* Form styles */
+.task-form {
+  max-width: 420px;
+  background: linear-gradient(180deg,#ffffff,#fbfcff);
+  border: 2px solid #0f1724;
+  padding: 14px;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 rgba(2,6,23,0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.form-error { color: #b91c1c; font-size: 13px; margin-top: 6px; }
+.form-row { margin-top: 8px; display:flex; gap:8px; align-items:center; }
+.btn { padding: 8px 12px; border-radius:0; background:#111827; color:#fff; border:none; cursor:pointer; }
+.btn:hover { opacity:0.95 }
+.btn-cancel { background:transparent; color:#374151; border:1px solid rgba(16,24,40,0.06); }
+.btn-space { margin-right: 8px; }
+.status-select { padding: 6px; margin-right: 8px; }
+
+/* Form field basics */
+.task-form label { display:block; font-weight:600; margin-bottom:6px; color:#111827; font-size:14px; }
+.task-form input[type="text"], .task-form input[type="date"], .task-form input, .task-form select, .task-form textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+  padding:8px 10px;
+  border:1px solid rgba(16,24,40,0.08);
+  border-radius:6px;
+  font-size:14px;
+  color: #111827;
+  background: #fff;
+  display: block;
+}
+.task-form textarea { min-height:80px; resize:vertical; }
+
+/* Compact two-column rows for smaller controls */
+.task-form .two-col { display:flex; gap:8px; }
+.task-form .two-col > * { flex:1; }
+
+/* Right-align buttons on small displays */
+@media (max-width:700px) {
+  .task-form { max-width: 100%; }
+  .form-row { justify-content: flex-start; }
+}
+
+/* Center the visible value / placeholder in the due date field and the priority select */
+.task-form input[type="date"] {
+  text-align: center;
+}
+.task-form input[type="date"]::placeholder {
+  text-align: center;
+}
+.task-form select {
+  text-align: center;
+  -moz-text-align-last: center; /* Firefox */
+  text-align-last: center; /* Chrome/Edge */
+}
+.task-form select option {
+  text-align: center;
+}
+
+/* Center the action buttons specifically inside the Add Task panel (aside) */
+.aside-area .task-form .form-row { justify-content: center; }
+
+/* Task list and items */
+.no-tasks { color: #666; }
+.task-card { border: 1px solid rgba(16,24,40,0.04); padding: 8px; margin-bottom: 8px; border-radius: 8px; }
+.task-row { display: flex; justify-content: space-between; align-items: center; }
+.task-meta { font-size: 12px; color: #555; }
+.task-desc { margin-top: 8px; }
+.task-foot { margin-top: 8px; font-size: 12px; color: #666; }
+.tags { margin-top: 8px; }
+.tag { font-size: 12px; margin-right: 6px; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+.btn-danger { color: red; }
+
+/* Subtle UI polish and drag animations */
+.task-card {
+  background: var(--card-bg);
+  border: 2px solid #0f1724;
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  margin-bottom: 14px;
+  transition: transform 120ms linear, box-shadow 120ms linear, margin 120ms linear;
+  will-change: transform;
+  /* hide native cursor here; we show a visible custom dot via CursorFollower */
+  cursor: none;
+  min-height: var(--card-min-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--card-shadow);
+}
+.task-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-4px); }
+.task-card[data-dragging="true"] { box-shadow: var(--card-shadow-active); transform: translateY(-6px) !important; z-index: 1000; }
+
+/* internal layout for card content */
+.task-card .task-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.task-card .task-header { margin-bottom: 8px; }
+.task-card .task-title { font-size: 18px; font-weight:600; margin:0; color:#111827; }
+.task-card .task-body { margin-top: 18px; color: #343a40; flex: 1 1 auto; }
+.task-card .task-actions { display:flex; gap:8px; align-items:center; margin-top:0; }
+
+/* Cursor and interaction rules */
+.task-card:active { cursor: none; }
+.task-card button,
+.task-card .btn,
+.task-card input,
+.task-card textarea,
+.task-card select,
+.task-card a {
+  cursor: none !important;
+}
+
+/* Keep cursor consistent across card to avoid flicker when moving the pointer */
+.task-card,
+.task-card .task-header,
+.task-card .task-title,
+.task-card .task-meta,
+.task-card .task-body,
+.task-card .task-foot {
+  cursor: none;
+}
+
+/* Hide native cursor on cards/overlay so only our CursorFollower dot is visible */
+.task-card, .drag-overlay {
+  cursor: none;
+}
+
+/* While dragging, also keep native cursor hidden */
+.task-card[data-dragging="true"],
+.task-card:active,
+.drag-overlay[data-dragging="true"],
+.drag-overlay:active {
+  cursor: none !important;
+}
+.task-card .task-desc,
+.task-card input,
+.task-card textarea {
+  user-select: text;
+}
+.task-card { -webkit-user-select: none; user-select: none; }
+
+.task-card strong { display: block; font-size: 18px; margin-bottom: 8px; }
+.task-card .task-meta { color: #666; font-size: 12px; }
+.task-card .task-desc { margin-top: 18px; color: #333; flex: 1 1 auto; }
+.task-card .task-foot { margin-top: 12px; font-size: 12px; color: #777; }
+
+.drag-overlay {
+  background: linear-gradient(180deg,#0b1220,#0f1724);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 rgba(2,6,23,0.95);
+  width: 340px;
+  cursor: none;
+  border: 2px solid rgba(255,255,255,0.06);
+  z-index: 9999;
+}
+
+.drag-overlay .task-title { color: #fff; }
+.drag-overlay .task-meta { color: rgba(255,255,255,0.75); font-size: 13px; }
+.drag-overlay .task-body { color: rgba(255,255,255,0.92); }
+
+.drag-tip { font-size: 13px; color: #333; margin-bottom: 8px; opacity: 0.95; }
+.drag-hint { font-weight: 700; }
+
+/* Filter controls */
+.filter-wrap { margin-bottom: 12px; }
+.filter-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.input-full { width: 100%; padding: 8px; }
+.badges { display: flex; gap: 8px; align-items: center; }
+.badge { background: #eef; padding: 2px 8px; border-radius: 12px; }
+.badge-priority { background: #efe; }
+.badge-search { background: #fee; }
+.btn-clear { margin-left: auto; }
+
+:root {
+  font-family: 'Chicago', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+}
+
+/* Load custom Chicago font from the public folder */
+@font-face {
+  font-family: 'Chicago';
+  src: url('/ChicagoFLF.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply Chicago to all UI text elements for consistency */
+html, body {
+  height: 100%;
+}
+
+body, input, button, textarea, select, label {
+  font-family: 'Chicago', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* Restore native cursor visibility across the app (overrides earlier cursor:none rules) */
+*, *::before, *::after {
+  cursor: auto !important;
+}
+
+/* Premium layout enhancements */
+.app-container {
+  margin: 24px auto;
+  max-width: 980px;
+  background: rgba(255,255,255,0.82);
+  border-radius: 14px;
+  padding: 28px 32px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.16), 0 4px 8px rgba(2,6,23,0.08);
+  border: 1px solid rgba(15,23,36,0.06);
+  backdrop-filter: blur(6px) saturate(120%);
+  position: relative;
+  z-index: 30;
+}
+
+.app-header { background: transparent; padding: 8px 0 18px; margin-bottom: 18px; }
+.app-header h2 { font-size: 28px; letter-spacing: 0.4px; }
+.app-logo img { width: 64px; height: auto; }
+
+/* Typography and link polish */
+body { color: #0f1724; font-size: 16px; }
+a { color: #0b61ff; text-decoration: none; transition: color 160ms ease; }
+a:hover { color: #0837b3; text-decoration: underline; }
+
+/* Buttons */
+.btn { background: linear-gradient(180deg,#0b61ff,#084bdb); color: #fff; border-radius: 8px; padding: 8px 14px; border: none; box-shadow: 0 6px 18px rgba(11,97,255,0.12); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(11,97,255,0.14); }
+
+/* Auth panel (login/register) */
+.auth-panel {
+  max-width: 540px;
+  margin: 8vh auto;
+  padding: 54px 36px 30px 36px;
+  border-radius: 14px;
+  /* subtle frosted glass with restrained lightness for a premium feel */
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.86));
+  color: #0b1224;
+  border: 1px solid rgba(15,23,36,0.06);
+  box-shadow: 0 18px 40px rgba(6,10,20,0.28);
+  backdrop-filter: blur(8px) saturate(130%);
+}
+.auth-panel h1 { margin: 0 0 14px 0; font-size: 30px; letter-spacing: 0.6px; color: #0f1724; }
+.auth-form .form-row { display: flex; flex-direction: column; align-items: stretch; margin-bottom: 12px; text-align: left; }
+.auth-form label { font-weight:700; color: rgba(15,23,36,0.9); margin-bottom: 6px; }
+.auth-form input { height: 46px; border-radius: 10px; padding: 10px 14px; border: 1px solid rgba(15,23,36,0.06); background: rgba(255,255,255,0.98); color: #0f1724; box-shadow: 0 6px 18px rgba(12,18,28,0.06); transition: box-shadow 160ms ease, transform 160ms ease; }
+.auth-form input:focus { outline: none; box-shadow: 0 10px 28px rgba(11,97,255,0.12); transform: translateY(-1px); }
+.auth-form input::placeholder { color: rgba(15,23,36,0.45); }
+.form-actions { display:flex; align-items:center; gap:12px; justify-content:flex-start; }
+.muted-link { color: rgba(12,18,28,0.65); margin-left: 8px; font-weight:700; }
+
+/* Light mode adjustments for auth panel already baked into the panel styles above */
+@media (max-width:520px) {
+  .auth-panel { padding: 20px; margin: 6vh 12px; }
+  .auth-panel h1 { font-size: 22px; }
+}
+
+/* Users page spacing and card breathing room */
+.users-page {
+  /* a little extra inner space for the users container */
+  padding-top: 8px;
+  padding-bottom: 16px;
+}
+.users-page .users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 12px;
+}
+.users-page .user-card {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border: 1px solid rgba(16,24,40,0.06);
+  box-shadow: 6px 6px 0 rgba(2,6,23,0.06);
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.users-page .user-head { display:flex; gap:12px; align-items:center; margin-bottom:0; }
+.users-page .username { font-size: 16px; font-weight:700; }
+.users-page .email { font-size: 13px; color: rgba(15,23,36,0.7); }
+.users-page .user-actions { margin-top: 0; display:flex; gap:8px; align-self: flex-end; }
+.users-page .user-id { margin-top: 10px; font-size: 12px; color: rgba(15,23,36,0.6); }
+
+/* ===== Premium overrides for users page ===== */
+/* Scope everything under .users-page to avoid global breakage */
+.users-page {
+  padding: 36px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(9,12,20,0.08);
+  border: 1px solid rgba(10,14,22,0.04);
+}
+.users-page h1 { margin-top: 0; margin-bottom: 18px; font-size: 26px; letter-spacing:0.2px; }
+.users-page .users-grid { gap: 22px; }
+.users-page .user-card {
+  padding: 18px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(10,14,22,0.06);
+  box-shadow: 0 8px 20px rgba(7,10,18,0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  display: flex;
+  flex-direction: column;
+}
+.users-page .user-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(7,10,18,0.08); }
+.users-page .user-head { align-items:center; gap:12px; margin-bottom:8px; }
+.users-page .user-meta { display:flex; flex-direction:column; }
+.users-page .username { font-size: 17px; font-weight:700; color: #071428; }
+.users-page .email { font-size: 13px; color: rgba(7,20,36,0.55); }
+
+/* Footer row: id on left, actions on right */
+.users-page .user-footer { display:flex; align-items:center; gap:12px; margin-top:12px; }
+.users-page .user-id { margin:0; font-size:12px; color: rgba(7,20,36,0.45); }
+.users-page .user-actions { margin-left: auto; display:flex; gap:10px; }
+
+/* Premium button styles (beveled subtle) */
+.users-page .btn {
+  background: linear-gradient(180deg,#ffffff,#f2f5f8);
+  color: #071428;
+  border: 1px solid rgba(7,20,36,0.08);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(7,10,18,0.06);
+  font-weight: 700;
+}
+.users-page .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(7,10,18,0.08); }
+.users-page .muted-link { align-self:center; color: rgba(7,20,36,0.6); font-weight:600; text-decoration:none; padding:6px 8px; }
+
+/* Mobile: stack actions full width */
+@media (max-width:520px) {
+  .users-page { padding: 20px; }
+  .users-page .users-grid { grid-template-columns: 1fr; }
+  .users-page .user-actions { flex-direction: column; width: 100%; }
+  .users-page .user-actions .btn, .users-page .user-actions .muted-link { width: 100%; text-align:center; }
+}
+
+
+/* Page overlay to dim bright backgrounds for readability */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45); /* dim the background image */
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Ensure header and other UI sit above the overlay */
+.app-header { position: relative; z-index: 35; }
+.auth-panel { position: relative; z-index: 36; }
+
+/* Back button inside panels */
+.back-button { display:inline-block; color: #0b0b0b; background: #f5f5f5; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:800; margin:12px 0 0 0; box-shadow: 0 6px 18px rgba(2,6,23,0.06); border: 1px solid rgba(11,12,14,0.06); }
+.app-container .back-button { background: #f7f7f7; }
+/* place the back button with normal flow so it sits with other action buttons at the panel bottom */
+.auth-panel .back-button,
+.profile-card .back-button {
+  position: static;
+  z-index: 36;
+  transform: none;
+  display: inline-block;
+}
+.dark-mode .back-button {
+  background: rgba(10,11,12,0.88);
+  color: #e9eef6;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* Profile card for user page */
+.profile-card { max-width:720px; margin: 14px auto; padding: 46px 20px 20px 20px; border-radius: 12px; background: rgba(255,255,255,0.06); box-shadow: 0 8px 28px rgba(2,6,23,0.45); border: 1px solid rgba(255,255,255,0.06); position: relative; }
+.profile-card h2 { margin: 0 0 8px 0; }
+.profile-row { display:flex; gap:18px; align-items:center; }
+.profile-meta { color: rgba(255,255,255,0.85); }
+.light-mode .profile-card { background: rgba(255,255,255,0.92); color: #0f1724; }
+
+
+/* Form inputs */
+input[type="text"], input[type="email"], input[type="password"], textarea { border-radius: 8px; padding: 10px 12px; border: 1px solid rgba(15,23,36,0.08); box-shadow: none; }
+
+/* Page sections */
+h1 { font-size: 34px; margin-top: 6px; margin-bottom: 12px; }
+/* Inline lists inside the app container (no default bullets) */
+.app-container ul { text-align: left; display: block; margin: 0 0 12px 0; padding-left: 0; list-style: none; }
+.app-container ul li { margin: 8px 0; }
+
+/* Dark mode variants */
+.dark-mode .app-container {
+  background: rgba(6,8,12,0.48);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #e6eef8;
+}
+.dark-mode body { color: #e6eef8; }
+.dark-mode a { color: #64a7ff; }
+.dark-mode .btn { background: linear-gradient(180deg,#1f6cff,#0b4ee0); box-shadow: 0 6px 18px rgba(11,78,220,0.12); }
+
+/* Improve dark-mode contrast for headers and visibility */
+.dark-mode .app-header h2 {
+  color: rgba(230,238,248,0.98);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+.dark-mode h1, .dark-mode .app-container h1 {
+  color: rgba(230,238,248,0.98);
+  text-shadow: 0 3px 18px rgba(0,0,0,0.65);
+}
+.dark-mode .app-container {
+  background: linear-gradient(180deg, rgba(8,10,12,0.86), rgba(6,8,12,0.64));
+}
+.dark-mode .app-logo img { filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6)); }
+
+/* Ensure links in dark mode remain readable */
+.dark-mode a { color: #a6d2ff; }
+
+/* Override: improve spacing and reposition back-button to avoid overlap */
+.auth-panel { padding-top: 72px !important; }
+.profile-card { padding-top: 56px !important; }
+
+/* unify primary button styles to monochrome retro palette */
+.btn {
+  background: linear-gradient(180deg,#efefef,#e2e2e2);
+  color: #0b0b0b;
+  border: 1px solid rgba(11,12,14,0.06);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(2,6,23,0.08); }
+.dark-mode .btn { background: linear-gradient(180deg,#141414,#0b0b0b); color: #e9eef6; box-shadow: 0 6px 18px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.04); }
+
+/* Small responsive tweaks */
+@media (max-width:700px) {
+  .app-container { padding: 18px; margin: 12px; }
+  .app-logo img { width: 48px; }
+  h1 { font-size: 26px; }
+}
