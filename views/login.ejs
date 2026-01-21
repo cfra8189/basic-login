@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app-header">
+    <div class="app-logo"><img src="/ltl-logo.png" alt="logo"/></div>
+    <h2>Login</h2>
+    <div>
+      <label class="theme-switch">
+        <input id="themeToggle" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="app-container">
+    <div class="auth-panel">
+      <h1>Login</h1>
+      <form class="auth-form" action="/api/users/login" method="post">
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Your password" required />
+        </div>
+        <div class="form-row form-actions">
+          <button class="btn" type="submit">Log in</button>
+          <a class="muted-link" href="/register">Register</a>
+          <a href="/" class="back-button">← Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/js/theme.js"></script>
+</body>
+</html>

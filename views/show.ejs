@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User App</title>
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <div class="app-header">
+      <div class="app-logo"><img src="/ltl-logo.png" alt="logo"/></div>
+      <h2>User</h2>
+      <div>
+        <label class="theme-switch">
+          <input id="themeToggle" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="app-container">
+      <div class="profile-card">
+        <h2><%= user.username %></h2>
+        <div class="profile-row">
+          <div class="profile-meta">
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <% if(user.required === true){ %>
+              <p><strong>Required:</strong> Yes</p>
+            <% } else { %>
+              <p><strong>Required:</strong> No</p>
+            <% } %>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <a class="btn" href="/users/<%= user._id %>/edit">Edit</a>
+          <form action="/users/<%= user._id %>?_method=DELETE" method="POST" style="display:inline-block; margin-left:12px;">
+            <button class="btn btn-danger" type="submit" onclick="return confirm('Delete this user?')">Delete</button>
+          </form>
+        </div>
+        <div style="margin-top:18px">
+          <a href="/" class="back-button">← Back</a>
+        </div>
+      </div>
+    </div>
+    <script src="/js/theme.js"></script>
+
+  </body>
+</html>

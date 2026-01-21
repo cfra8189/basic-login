@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div class="app-header">
+    <div class="app-logo"><img src="/ltl-logo.png" alt="logo"/></div>
+    <h2>Register</h2>
+    <div>
+      <label class="theme-switch">
+        <input id="themeToggle" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="app-container">
+    <div class="auth-panel">
+      <h1>Register</h1>
+      <form class="auth-form" action="/api/users/register" method="post">
+        <div class="form-row"><label>Username <input name="username" required></label></div>
+        <div class="form-row"><label>Email <input name="email" type="email" required></label></div>
+        <div class="form-row"><label>Password <input name="password" type="password" required></label></div>
+        <div class="form-row form-actions">
+          <button class="btn" type="submit">Register</button>
+          <a class="muted-link" href="/login">Login</a>
+          <a href="/" class="back-button">← Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/js/theme.js"></script>
+</body>
+</html>
