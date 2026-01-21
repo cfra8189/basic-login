@@ -88,6 +88,8 @@ npx nodemon server.js
 node server.js
 ```
 
+<!-- Deployment instructions removed per user request -->
+
 ## Testing (curl examples)
 
 Register:

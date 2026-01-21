@@ -174,7 +174,8 @@ app.get('/users', async (req, res) => {
 // =====================
 app.get('/users/:id', async (req, res) => {
   try {
-    const id = String(req.params.id || '').trim();
+    const id = normalizeId(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid id');
     const user = await User.findById(id).select('-password');
     if (!user) return res.status(404).send('User not found');
     res.render('show.ejs', { user });
@@ -190,7 +191,8 @@ app.get('/users/:id', async (req, res) => {
 // =====================
 app.get('/users/:id/edit', async (req, res) => {
   try {
-    const id = String(req.params.id || '').trim();
+    const id = normalizeId(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid id');
     const user = await User.findById(id).select('-password');
     if (!user) return res.status(404).send('User not found');
     res.render('edit.ejs', { user });
@@ -206,11 +208,23 @@ app.get('/users/:id/edit', async (req, res) => {
 // =====================
 app.put('/users/:id', async (req, res) => {
   try {
-    const id = String(req.params.id || '').trim();
+    const id = normalizeId(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid id');
     const body = req.body || {};
     Object.keys(body).forEach(k => { if (body[k] === '') delete body[k]; });
     // Prevent password updates via this simple form (optional)
-    if (body.password) delete body.password;
+    // If a password is provided, load the user and save so pre-save hook hashes it
+    if (body.password) {
+      const user = await User.findById(id);
+      if (!user) return res.status(404).send('User not found');
+      // update allowed fields
+      if (body.username) user.username = body.username;
+      if (body.email) user.email = body.email;
+      if (body.password && String(body.password).trim() !== '') user.password = body.password;
+      await user.save();
+      return res.redirect('/users');
+    }
+
     await User.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' });
     res.redirect('/users');
   } catch (err) {
@@ -225,7 +239,8 @@ app.put('/users/:id', async (req, res) => {
 // =====================
 app.delete('/users/:id', async (req, res) => {
   try {
-    const id = String(req.params.id || '').trim();
+    const id = normalizeId(req.params.id);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid id');
     await User.findByIdAndDelete(id);
     res.redirect('/users');
   } catch (err) {
@@ -233,6 +248,13 @@ app.delete('/users/:id', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+// Normalize and sanitize incoming id params (accepts optional "id:<hex>" form)
+function normalizeId(param) {
+  let id = String(param || '').trim();
+  if (id.startsWith('id:')) id = id.slice(3);
+  return id;
+}
 
 // =====================
 // SHOW / EDIT / UPDATE / DELETE
